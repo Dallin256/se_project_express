@@ -13,11 +13,17 @@ function deleteItem(req, res) {
     .findByIdAndDelete(req.params.itemId)
     .then((item) => {
       if (!item) {
-        err404(res, "Item");
+        return err404(res, "Item");
       }
       res.send({ message: "Deletion Successful" });
     })
-    .catch((error) => err500(res));
+    .catch((error) => {
+      if (error.name == "CastError") {
+        return err400(res);
+      }
+
+      return err500(res);
+    });
 }
 
 function createItem(req, res) {
@@ -39,13 +45,17 @@ function likeItem(req, res) {
       { $addToSet: { likes: req.user._id } },
       { new: true }
     )
+    .then((item) => {
+      res.send(item);
+    })
     .catch((error) => {
       if (!item) {
         return err404(res, "ERROR! Liked item not found!");
       }
-      if (error == "CastError") {
+      if (error.name == "CastError") {
         return err400(res);
       }
+
       return err500(res);
     });
 }
@@ -57,13 +67,17 @@ function unlikeItem(req, res) {
       { $pull: { likes: req.user._id } },
       { new: true }
     )
-    .catch((error) => {
+    .then((item) => {
       if (!item) {
         return err404(res, "ERROR! Liked item not found!");
       }
-      if (error == "CastError") {
+      res.send(item);
+    })
+    .catch((error) => {
+      if (error.name == "CastError") {
         return err400(res);
       }
+
       return err500(res);
     });
 }
