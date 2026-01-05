@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 
 const itemSchema = new mongoose.Schema({
-  name: { type: String, minLength: 2, maxLength: 30, required: true },
+  name: { type: String, minlength: 2, maxlength: 30, required: true },
   weather: { type: String, required: true, enum: ["hot", "warm", "cold"] },
   imageUrl: {
     type: String,
@@ -15,7 +15,10 @@ const itemSchema = new mongoose.Schema({
     },
   },
   owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "user" },
-  likes: [],
+  likes: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
+    default: [],
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

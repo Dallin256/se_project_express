@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const userRoutes = require("./routes/users");
 const itemRoutes = require("./routes/clothingItems");
+const { err404 } = require("./utils/errors");
 const { port = 3001 } = process.env;
 const mongoose = require("mongoose");
 
@@ -21,7 +22,7 @@ app.use("/", userRoutes);
 app.use("/", itemRoutes);
 
 app.use((req, res) => {
-  res.status(404).send({ message: "Requested resource not found" });
+  err404(res);
 });
 
 app.listen(port, () => {

@@ -4,7 +4,7 @@ const { err500, err400, err404 } = require("../utils/errors");
 function getUsers(req, res) {
   User.find({})
     .then((users) => res.send(users))
-    .catch((error) => err500(res));
+    .catch((_err) => err500(res));
 }
 
 function getUser(req, res) {
@@ -16,7 +16,7 @@ function getUser(req, res) {
       res.send(user);
     })
     .catch((error) => {
-      if (error.name == "CastError") {
+      if (error.name === "CastError") {
         return err400(res);
       }
       return err500(res);
@@ -29,7 +29,7 @@ function createUser(req, res) {
     .then((user) => {
       res.send(user);
     })
-    .catch((err) => {
+    .catch((_err) => {
       err400(res);
     });
 }

@@ -5,7 +5,7 @@ function getItems(req, res) {
   item
     .find({})
     .then((item) => res.send(item))
-    .catch((error) => err500(res));
+    .catch((_err) => err500(res));
 }
 
 function deleteItem(req, res) {
@@ -18,7 +18,7 @@ function deleteItem(req, res) {
       res.send({ message: "Deletion Successful" });
     })
     .catch((error) => {
-      if (error.name == "CastError") {
+      if (error.name === "CastError") {
         return err400(res);
       }
 
@@ -33,7 +33,7 @@ function createItem(req, res) {
     .then((item) => {
       res.send(item);
     })
-    .catch((err) => {
+    .catch((_err) => {
       err400(res);
     });
 }
@@ -46,13 +46,16 @@ function likeItem(req, res) {
       { new: true }
     )
     .then((item) => {
+      if (!updateditem) {
+        return err404(res);
+      }
       res.send(item);
     })
     .catch((error) => {
       if (!item) {
         return err404(res, "ERROR! Liked item not found!");
       }
-      if (error.name == "CastError") {
+      if (error.name === "CastError") {
         return err400(res);
       }
 
@@ -74,7 +77,7 @@ function unlikeItem(req, res) {
       res.send(item);
     })
     .catch((error) => {
-      if (error.name == "CastError") {
+      if (error.name === "CastError") {
         return err400(res);
       }
 
