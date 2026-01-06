@@ -46,15 +46,12 @@ function likeItem(req, res) {
       { new: true }
     )
     .then((item) => {
-      if (!updateditem) {
+      if (!item) {
         return err404(res);
       }
       res.send(item);
     })
     .catch((error) => {
-      if (!item) {
-        return err404(res, "ERROR! Liked item not found!");
-      }
       if (error.name === "CastError") {
         return err400(res);
       }
