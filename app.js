@@ -1,8 +1,7 @@
 const express = require("express");
 const app = express();
-const userRoutes = require("./routes/users");
-const itemRoutes = require("./routes/clothingItems");
-const { err404 } = require("./utils/errors");
+const MainRoutes = require("./routes/index");
+const { NOT_FOUND } = require("./utils/errors");
 const { port = 3001 } = process.env;
 const mongoose = require("mongoose");
 
@@ -18,11 +17,10 @@ app.get("/", (req, res) => {
   res.send("Server Running :3");
 });
 
-app.use("/", userRoutes);
-app.use("/", itemRoutes);
+app.use("/", MainRoutes);
 
 app.use((req, res) => {
-  err404(res);
+  res.status(NOT_FOUND).send({ message: "Request not found" });
 });
 
 app.listen(port, () => {

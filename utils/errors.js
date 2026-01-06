@@ -1,15 +1,5 @@
-function err500(res) {
-  return res
-    .status(500)
-    .send({ message: "An error has occurred on the server" });
-}
+const INTERNAL_SERVER_ERROR = 500;
+const BAD_REQUEST = 400;
+const NOT_FOUND = 404;
 
-function err400(res) {
-  return res.status(400).send({ message: "ERROR! Invalid input data!" });
-}
-
-function err404(res, item) {
-  return res.status(404).send({ message: `ERROR! ${item} Not Found!` });
-}
-
-module.exports = { err500, err400, err404 };
+module.exports = { INTERNAL_SERVER_ERROR, BAD_REQUEST, NOT_FOUND };

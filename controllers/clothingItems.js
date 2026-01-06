@@ -1,11 +1,19 @@
 const item = require("../modals/clothingItem");
-const { err500, err400, err404 } = require("../utils/errors");
+const {
+  INTERNAL_SERVER_ERROR,
+  BAD_REQUEST,
+  NOT_FOUND,
+} = require("../utils/errors");
 
 function getItems(req, res) {
   item
     .find({})
     .then((item) => res.send(item))
-    .catch((_err) => err500(res));
+    .catch((_err) =>
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Internal Server Error" })
+    );
 }
 
 function deleteItem(req, res) {
@@ -13,16 +21,18 @@ function deleteItem(req, res) {
     .findByIdAndDelete(req.params.itemId)
     .then((item) => {
       if (!item) {
-        return err404(res, "Item");
+        return res.status(NOT_FOUND).send({ message: `${item} not found` });
       }
       res.send({ message: "Deletion Successful" });
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        return err400(res);
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
 
-      return err500(res);
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Internal Server Error" });
     });
 }
 
@@ -34,7 +44,7 @@ function createItem(req, res) {
       res.send(item);
     })
     .catch((_err) => {
-      err400(res);
+      res.status(BAD_REQUEST).send({ message: "Invalid data" });
     });
 }
 
@@ -47,16 +57,18 @@ function likeItem(req, res) {
     )
     .then((item) => {
       if (!item) {
-        return err404(res);
+        return res.status(NOT_FOUND).send({ message: `${item} not found` });
       }
       res.send(item);
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        return err400(res);
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
 
-      return err500(res);
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Internal Server Error" });
     });
 }
 
@@ -69,16 +81,18 @@ function unlikeItem(req, res) {
     )
     .then((item) => {
       if (!item) {
-        return err404(res, "ERROR! Liked item not found!");
+        return res.status(NOT_FOUND).send({ message: `${item} not found` });
       }
       res.send(item);
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        return err400(res);
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
 
-      return err500(res);
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "Internal Server Error" });
     });
 }
 
