@@ -1,4 +1,4 @@
-const item = require("../modals/clothingItem");
+const item = require("../models/clothingItem");
 const {
   INTERNAL_SERVER_ERROR,
   BAD_REQUEST,

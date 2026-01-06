@@ -1,4 +1,4 @@
-const User = require("../modals/user");
+const User = require("../models/user");
 const {
   INTERNAL_SERVER_ERROR,
   BAD_REQUEST,
