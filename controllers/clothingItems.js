@@ -55,9 +55,11 @@ function likeItem(req, res) {
       { $addToSet: { likes: req.user._id } },
       { new: true }
     )
-    .then((item) => {
-      if (!item) {
-        return res.status(NOT_FOUND).send({ message: `${item} not found` });
+    .then((updatedItem) => {
+      if (!updatedItem) {
+        return res
+          .status(NOT_FOUND)
+          .send({ message: `${updatedItem} not found` });
       }
       res.send(item);
     })

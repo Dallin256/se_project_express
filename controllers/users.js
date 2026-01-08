@@ -8,7 +8,7 @@ const {
 function getUsers(req, res) {
   User.find({})
     .then((users) => res.send(users))
-    .catch((_err) =>
+    .catch(() =>
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "Internal Server Error" })
@@ -19,9 +19,9 @@ function getUser(req, res) {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).send({ message: `${item} not found` });
+        return res.status(NOT_FOUND).send({ message: `${user} not found` });
       }
-      res.send(user);
+      return res.send(user);
     })
     .catch((error) => {
       if (error.name === "CastError") {
