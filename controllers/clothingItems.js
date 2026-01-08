@@ -8,8 +8,8 @@ const {
 function getItems(req, res) {
   item
     .find({})
-    .then((item) => res.send(item))
-    .catch((_err) =>
+    .then(() => res.send(item))
+    .catch(() =>
       res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "Internal Server Error" })
@@ -19,11 +19,11 @@ function getItems(req, res) {
 function deleteItem(req, res) {
   item
     .findByIdAndDelete(req.params.itemId)
-    .then((item) => {
+    .then(() => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: `${item} not found` });
       }
-      res.send({ message: "Deletion Successful" });
+      return res.send({ message: "Deletion Successful" });
     })
     .catch((error) => {
       if (error.name === "CastError") {
@@ -40,10 +40,10 @@ function createItem(req, res) {
   const { name, weather, imageUrl } = req.body;
   item
     .create({ name, weather, imageUrl, owner: req.user._id })
-    .then((item) => {
+    .then(() => {
       res.send(item);
     })
-    .catch((_err) => {
+    .catch(() => {
       res.status(BAD_REQUEST).send({ message: "Invalid data" });
     });
 }
@@ -61,7 +61,7 @@ function likeItem(req, res) {
           .status(NOT_FOUND)
           .send({ message: `${updatedItem} not found` });
       }
-      res.send(item);
+      return res.send(item);
     })
     .catch((error) => {
       if (error.name === "CastError") {
@@ -81,11 +81,11 @@ function unlikeItem(req, res) {
       { $pull: { likes: req.user._id } },
       { new: true }
     )
-    .then((item) => {
+    .then(() => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: `${item} not found` });
       }
-      res.send(item);
+      return res.send(item);
     })
     .catch((error) => {
       if (error.name === "CastError") {

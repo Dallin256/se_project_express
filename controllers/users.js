@@ -39,7 +39,7 @@ function createUser(req, res) {
     .then((user) => {
       res.send(user);
     })
-    .catch((_err) => {
+    .catch(() => {
       res.status(BAD_REQUEST).send({ message: "Invalid data" });
     });
 }
