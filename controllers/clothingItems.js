@@ -44,7 +44,7 @@ function createItem(req, res) {
       res.send(cItem);
     })
     .catch((error) => {
-      if (error.name === "CastError") {
+      if (error.name === "ValidationError" || error.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
