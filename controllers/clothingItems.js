@@ -3,6 +3,7 @@ const {
   INTERNAL_SERVER_ERROR,
   BAD_REQUEST,
   NOT_FOUND,
+  FORBIDDEN,
 } = require("../utils/errors");
 
 function getItems(req, res) {
@@ -16,24 +17,30 @@ function getItems(req, res) {
     );
 }
 
-function deleteItem(req, res) {
-  item
-    .findByIdAndDelete(req.params.itemId)
-    .then(() => {
-      if (!item) {
-        return res.status(NOT_FOUND).send({ message: `${item} not found` });
-      }
-      return res.send({ message: "Deletion Successful" });
-    })
-    .catch((error) => {
-      if (error.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
-      }
+async function deleteItem(req, res) {
+  try {
+    const foundItem = await item.findById(req.params.itemId);
 
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
-    });
+    if (!foundItem) {
+      return res.status(NOT_FOUND).send({ message: "item not found" });
+    }
+
+    if (foundItem.owner.id != req.user._id) {
+      return res.status(FORBIDDEN).send({ message: "forbidden" });
+    }
+
+    await foundItem.deleteOne();
+
+    return res.send({ message: "Deletion Successful" });
+  } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+    }
+
+    return res
+      .status(INTERNAL_SERVER_ERROR)
+      .send({ message: "Internal Server Error" });
+  }
 }
 
 function createItem(req, res) {
