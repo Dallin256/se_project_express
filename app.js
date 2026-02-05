@@ -2,7 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const MainRoutes = require("./routes/index");
 const { NOT_FOUND } = require("./utils/errors");
-const { login, createUser } = require("./controllers/users");
 const cors = require("cors");
 
 const app = express();
@@ -20,9 +19,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/", MainRoutes);
-
-app.post("/signin", login);
-app.post("/signup", createUser);
 
 app.use((req, res) => {
   res.status(NOT_FOUND).send({ message: "Request not found" });

@@ -6,8 +6,8 @@ const {
 } = require("../controllers/users");
 const { authorize } = require("../middlewares/auth");
 
-router.get("/users/me", authorize, getCurrentUser);
-router.post("/users", authorize, createUser);
-router.patch("users/me", authorize, updateUser);
+router.get("/me", authorize, getCurrentUser);
+router.post("/", authorize, createUser);
+router.patch("/me", authorize, updateUser);
 
 module.exports = router;
