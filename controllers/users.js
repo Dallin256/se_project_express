@@ -14,11 +14,11 @@ const { patch } = require("../routes");
 
 function getCurrentUser(req, res) {
   User.findById(req.user._id)
-    .then((User) => {
-      if (!User) {
+    .then((user) => {
+      if (!user) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
-      return res.send(User);
+      return res.send(user);
     })
     .catch((error) => {
       if (error.name === "CastError") {
@@ -32,12 +32,18 @@ function getCurrentUser(req, res) {
 
 function createUser(req, res) {
   const { name, avatar, email, password } = req.body;
+  if (!email || !password) {
+    return res
+      .status(INTERNAL_SERVER_ERROR)
+      .send({ message: "Internal Server Error" });
+  }
 
   bcrypt.hash(password, 13).then((hashedPassword) => {
     return User.create({ name, avatar, email, password: hashedPassword })
       .then((User) => {
-        delete User._doc.password;
-        return res.send(User);
+        const userObject = User.toObject();
+        delete userObject.password;
+        return res.status(201).send(User);
       })
       .catch((error) => {
         if (error.code == 11000) {
