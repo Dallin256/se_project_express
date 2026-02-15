@@ -19,7 +19,3 @@ app.get("/", (req, res) => {
 });
 
 app.use("/", MainRoutes);
-
-app.use((req, res) => {
-  res.status(NOT_FOUND).send({ message: "Request not found" });
-});
