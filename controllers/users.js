@@ -51,7 +51,7 @@ function createUser(req, res) {
             .status(CONFLICT_ERROR)
             .send({ message: "email already exists in database" });
         }
-        if (error.name === "CastError" || error.name === "ValidationError") {
+        if (error.name === "ValidationError") {
           return res.status(BAD_REQUEST).send({ message: "Invalid data" });
         }
         return res
@@ -76,10 +76,7 @@ function login(req, res) {
       return res.send({ token });
     })
     .catch((error) => {
-      if (
-        error.name === "ValidationError" ||
-        error.message == "Incorrect email or password"
-      ) {
+      if (error.message == "Incorrect email or password") {
         return res
           .status(INVALID_AUTH)
           .send({ message: "Authorization required" });
