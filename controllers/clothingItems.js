@@ -25,7 +25,7 @@ async function deleteItem(req, res) {
       return res.status(NOT_FOUND).send({ message: "item not found" });
     }
 
-    if (foundItem.owner.toString() != req.user._id) {
+    if (foundItem.owner.toString() !== req.user._id) {
       return res.status(FORBIDDEN).send({ message: "forbidden" });
     }
 

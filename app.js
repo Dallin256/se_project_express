@@ -1,8 +1,7 @@
+const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const MainRoutes = require("./routes/index");
-const { NOT_FOUND } = require("./utils/errors");
-const cors = require("cors");
 
 const app = express();
 const { port = 3001 } = process.env;

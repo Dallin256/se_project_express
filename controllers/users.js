@@ -9,8 +9,6 @@ const {
   INVALID_AUTH,
 } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
-const authorize = require("../middlewares/auth");
-const { patch } = require("../routes");
 
 function getCurrentUser(req, res) {
   User.findById(req.user._id)
@@ -33,20 +31,18 @@ function getCurrentUser(req, res) {
 function createUser(req, res) {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
-    return res
-      .status(INTERNAL_SERVER_ERROR)
-      .send({ message: "Internal Server Error" });
+    return res.status(BAD_REQUEST).send({ message: "Bad Request" });
   }
 
   bcrypt.hash(password, 13).then((hashedPassword) => {
     return User.create({ name, avatar, email, password: hashedPassword })
-      .then((User) => {
-        const userObject = User.toObject();
+      .then((user) => {
+        const userObject = user.toObject();
         delete userObject.password;
-        return res.status(201).send(User);
+        return res.status(201).send(userObject);
       })
       .catch((error) => {
-        if (error.code == 11000) {
+        if (error.code === 11000) {
           return res
             .status(CONFLICT_ERROR)
             .send({ message: "email already exists in database" });
@@ -69,14 +65,14 @@ function login(req, res) {
   }
 
   return User.findUserByCredentials(email, password)
-    .then((User) => {
-      const token = jwt.sign({ _id: User._id }, JWT_SECRET, {
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
       return res.send({ token });
     })
     .catch((error) => {
-      if (error.message == "Incorrect email or password") {
+      if (error.message === "Incorrect email or password") {
         return res
           .status(INVALID_AUTH)
           .send({ message: "Authorization required" });
