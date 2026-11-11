@@ -2,11 +2,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const {
-  INTERNAL_SERVER_ERROR,
-  BAD_REQUEST,
-  NOT_FOUND,
+  BAD_REQUEST_ERROR,
+  NOT_FOUND_ERROR,
   CONFLICT_ERROR,
-  INVALID_AUTH,
+  INVALID_AUTH_ERROR,
 } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
@@ -14,24 +13,22 @@ function getCurrentUser(req, res) {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
+        throw new NOT_FOUND_ERROR("User not found");
       }
       return res.send(user);
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        throw new BAD_REQUEST_ERROR("Invalid data");
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+      next(error);
     });
 }
 
 function createUser(req, res) {
   const { name, avatar, email, password } = req.body;
   if (!email || !password) {
-    return res.status(BAD_REQUEST).send({ message: "Bad Request" });
+    throw new BAD_REQUEST_ERROR("Invalid data");
   }
 
   bcrypt.hash(password, 13).then((hashedPassword) => {
@@ -43,16 +40,12 @@ function createUser(req, res) {
       })
       .catch((error) => {
         if (error.code === 11000) {
-          return res
-            .status(CONFLICT_ERROR)
-            .send({ message: "email already exists in database" });
+          throw new CONFLICT_ERROR("email already exists in database");
         }
         if (error.name === "ValidationError") {
-          return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+          throw new BAD_REQUEST_ERROR("Invalid data");
         }
-        return res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: "Internal Server Error" });
+        next(error);
       });
   });
 }
@@ -61,7 +54,7 @@ function login(req, res) {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+    throw new BAD_REQUEST_ERROR("Invalid data");
   }
 
   return User.findUserByCredentials(email, password)
@@ -73,13 +66,9 @@ function login(req, res) {
     })
     .catch((error) => {
       if (error.message === "Incorrect email or password") {
-        return res
-          .status(INVALID_AUTH)
-          .send({ message: "Authorization required" });
+        throw new INVALID_AUTH_ERROR("Authorization required");
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+      next(error);
     });
 }
 
@@ -94,20 +83,18 @@ function updateUser(req, res) {
   )
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
+        throw new NOT_FOUND_ERROR("User not found");
       }
       return res.send(user);
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        throw new BAD_REQUEST_ERROR("Invalid data");
       }
       if (error.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        throw new INVALID_AUTH_ERROR("Authorization required");
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+      next(error);
     });
 }
 

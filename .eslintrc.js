@@ -25,5 +25,6 @@ module.exports = {
     "arrow-body-style": "off",
     "consistent-return": "off",
     "no-underscore-dangle": ["error", { allow: ["_id", "_err"] }],
+    "no-unused-vars": ["error", { argsIgnorePattern: "next" }],
   },
 };

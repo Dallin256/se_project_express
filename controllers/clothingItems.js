@@ -1,20 +1,15 @@
 const item = require("../models/clothingItem");
 const {
-  INTERNAL_SERVER_ERROR,
-  BAD_REQUEST,
-  NOT_FOUND,
-  FORBIDDEN,
+  BAD_REQUEST_ERROR,
+  NOT_FOUND_ERROR,
+  FORBIDDEN_ERROR,
 } = require("../utils/errors");
 
 function getItems(req, res) {
   item
     .find({})
     .then((cItem) => res.send(cItem))
-    .catch(() =>
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" })
-    );
+    .catch(() => next());
 }
 
 async function deleteItem(req, res) {
@@ -22,11 +17,11 @@ async function deleteItem(req, res) {
     const foundItem = await item.findById(req.params.itemId);
 
     if (!foundItem) {
-      return res.status(NOT_FOUND).send({ message: "item not found" });
+      throw new NOT_FOUND_ERROR();
     }
 
     if (foundItem.owner.toString() !== req.user._id) {
-      return res.status(FORBIDDEN).send({ message: "forbidden" });
+      throw new FORBIDDEN_ERROR("Error: Forbidden");
     }
 
     await foundItem.deleteOne();
@@ -34,12 +29,9 @@ async function deleteItem(req, res) {
     return res.send({ message: "Deletion Successful" });
   } catch (error) {
     if (error.name === "CastError") {
-      return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+      throw new BAD_REQUEST_ERROR("Invalid data");
     }
-
-    return res
-      .status(INTERNAL_SERVER_ERROR)
-      .send({ message: "Internal Server Error" });
+    next(error);
   }
 }
 
@@ -52,11 +44,9 @@ function createItem(req, res) {
     })
     .catch((error) => {
       if (error.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        throw new BAD_REQUEST_ERROR("Invalid data");
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+      next(error);
     });
 }
 
@@ -69,20 +59,16 @@ function likeItem(req, res) {
     )
     .then((updatedItem) => {
       if (!updatedItem) {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: `${updatedItem} not found` });
+        throw new NOT_FOUND_ERROR(`${updatedItem} not found`);
       }
+
       return res.send(updatedItem);
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        throw new BAD_REQUEST_ERROR("Invalid data");
       }
-
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+      next(error);
     });
 }
 
@@ -95,20 +81,16 @@ function unlikeItem(req, res) {
     )
     .then((updatedItem) => {
       if (!updatedItem) {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: `${updatedItem} not found` });
+        throw new NOT_FOUND_ERROR(`${updatedItem} not found`);
       }
       return res.send(updatedItem);
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        throw new BAD_REQUEST_ERROR("Invalid data");
       }
 
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "Internal Server Error" });
+      next(error);
     });
 }
 
