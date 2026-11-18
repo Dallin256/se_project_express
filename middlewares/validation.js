@@ -27,6 +27,12 @@ module.exports.validateCardBody = celebrate({
       "string.empty": 'The "imageUrl" field must be filled in',
       "string.uri": 'the "imageUrl" field must be a valid url',
     }),
+
+    weather: Joi.string().valid("hot", "warm", "cold").required({
+      "string.empty": 'The "weather" field must be filled in',
+      "string.invalid":
+        'The "weather" field must be either "hot", "warm", or "cold"',
+    }),
   }),
 });
 
@@ -51,15 +57,15 @@ module.exports.validateUserBody = celebrate({
   }),
 });
 
-module.exports.validateUserId = celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().required().alphanum().length(24).messages({
-      "string.empty": "Missing ID",
-      "string.length": "Invalid ID",
-      "string.alphanum": "Invalid ID",
-    }),
-  }),
-});
+// module.exports.validateUserId = celebrate({
+//   params: Joi.object().keys({
+//     userId: Joi.string().required().alphanum().length(24).messages({
+//       "string.empty": "Missing ID",
+//       "string.length": "Invalid ID",
+//       "string.alphanum": "Invalid ID",
+//     }),
+//   }),
+// });
 
 module.exports.validateItemId = celebrate({
   params: Joi.object().keys({

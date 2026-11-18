@@ -5,6 +5,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const MainRoutes = require("./routes/index");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+const { handleError } = require("./middlewares/error");
 
 const app = express();
 const { port = 3001 } = process.env;
@@ -22,10 +23,6 @@ app.get("/", (req, res) => {
 
 app.use("/", MainRoutes);
 app.use(errorLogger);
-
-app.use((err, req, res, next) => {
-  console.error(err);
-  return res.status(err.statusCode).send({ message: err.msg });
-});
+app.use(handleError);
 
 app.listen(port, () => {});

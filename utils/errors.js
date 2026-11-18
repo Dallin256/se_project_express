@@ -1,50 +1,50 @@
-class INTERNAL_SERVER_ERROR extends Error {
+class InternalServerError extends Error {
   constructor(msg) {
-    super(msg);
+    super(msg || "Internal Server Error");
     this.statusCode = 500;
   }
 }
 
-class BAD_REQUEST_ERROR extends Error {
+class BadRequestError extends Error {
   constructor(msg) {
-    super(msg);
+    super(msg || "Bad Request");
     this.statusCode = 400;
   }
 }
 
-class NOT_FOUND_ERROR extends Error {
+class NotFoundError extends Error {
   constructor(msg) {
-    super(msg);
+    super(msg || "Item Not Found");
     this.statusCode = 404;
   }
 }
 
-class CONFLICT_ERROR extends Error {
+class ConflictError extends Error {
   constructor(msg) {
-    super(msg);
+    super(msg || "Conflict");
     this.statusCode = 409;
   }
 }
 
-class INVALID_AUTH_ERROR extends Error {
+class InvalidAuthError extends Error {
   constructor(msg) {
-    super(msg);
+    super(msg || "Authorization Required");
     this.statusCode = 401;
   }
 }
 
-class FORBIDDEN_ERROR extends Error {
+class ForebiddenError extends Error {
   constructor(msg) {
-    super(msg);
+    super(msg || "Forebidden");
     this.statusCode = 403;
   }
 }
 
 module.exports = {
-  INTERNAL_SERVER_ERROR,
-  BAD_REQUEST_ERROR,
-  NOT_FOUND_ERROR,
-  CONFLICT_ERROR,
-  INVALID_AUTH_ERROR,
-  FORBIDDEN_ERROR,
+  InternalServerError,
+  BadRequestError,
+  NotFoundError,
+  ConflictError,
+  InvalidAuthError,
+  ForebiddenError,
 };

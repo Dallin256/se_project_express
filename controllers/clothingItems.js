@@ -1,15 +1,17 @@
+const { handleError } = require("../middlewares/error");
 const item = require("../models/clothingItem");
 const {
-  BAD_REQUEST_ERROR,
-  NOT_FOUND_ERROR,
-  FORBIDDEN_ERROR,
+  BadRequestError,
+  NotFoundError,
+  ForebiddenError,
+  InternalServerError,
 } = require("../utils/errors");
 
-function getItems(req, res) {
+function getItems(req, res, next) {
   item
     .find({})
     .then((cItem) => res.send(cItem))
-    .catch(() => next());
+    .catch((err) => next(new InternalServerError()));
 }
 
 async function deleteItem(req, res) {
@@ -17,11 +19,11 @@ async function deleteItem(req, res) {
     const foundItem = await item.findById(req.params.itemId);
 
     if (!foundItem) {
-      throw new NOT_FOUND_ERROR();
+      return next(new NotFoundError());
     }
 
     if (foundItem.owner.toString() !== req.user._id) {
-      throw new FORBIDDEN_ERROR("Error: Forbidden");
+      return next(new ForebiddenError("Error: Forbidden"));
     }
 
     await foundItem.deleteOne();
@@ -29,9 +31,9 @@ async function deleteItem(req, res) {
     return res.send({ message: "Deletion Successful" });
   } catch (error) {
     if (error.name === "CastError") {
-      throw new BAD_REQUEST_ERROR("Invalid data");
+      return next(new BadRequestError("Invalid data"));
     }
-    next(error);
+    return next(new InternalServerError());
   }
 }
 
@@ -43,10 +45,7 @@ function createItem(req, res) {
       res.send(cItem);
     })
     .catch((error) => {
-      if (error.name === "ValidationError") {
-        throw new BAD_REQUEST_ERROR("Invalid data");
-      }
-      next(error);
+      next(new error());
     });
 }
 
@@ -59,16 +58,16 @@ function likeItem(req, res) {
     )
     .then((updatedItem) => {
       if (!updatedItem) {
-        throw new NOT_FOUND_ERROR(`${updatedItem} not found`);
+        next(new error());
       }
 
       return res.send(updatedItem);
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        throw new BAD_REQUEST_ERROR("Invalid data");
+        throw new BadRequestError("Invalid data");
       }
-      next(error);
+      next(new error());
     });
 }
 
@@ -81,16 +80,12 @@ function unlikeItem(req, res) {
     )
     .then((updatedItem) => {
       if (!updatedItem) {
-        throw new NOT_FOUND_ERROR(`${updatedItem} not found`);
+        next(new error());
       }
       return res.send(updatedItem);
     })
     .catch((error) => {
-      if (error.name === "CastError") {
-        throw new BAD_REQUEST_ERROR("Invalid data");
-      }
-
-      next(error);
+      next(new error());
     });
 }
 
