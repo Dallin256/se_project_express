@@ -3,6 +3,8 @@ require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
+const { errors } = require("celebrate");
+
 const MainRoutes = require("./routes/index");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 const { handleError } = require("./middlewares/error");
@@ -23,6 +25,7 @@ app.get("/", (req, res) => {
 
 app.use("/", MainRoutes);
 app.use(errorLogger);
+app.use(errors);
 app.use(handleError);
 
 app.listen(port, () => {});
