@@ -45,7 +45,10 @@ function createItem(req, res) {
       res.send(cItem);
     })
     .catch((error) => {
-      next(new error());
+      if (error.name === "ValidationError") {
+        return next(new BadRequestError("Invalid Data"));
+      }
+      return next(new InternalServerError());
     });
 }
 
@@ -58,16 +61,16 @@ function likeItem(req, res) {
     )
     .then((updatedItem) => {
       if (!updatedItem) {
-        next(new error());
+        return next(new InternalServerError());
       }
 
       return res.send(updatedItem);
     })
     .catch((error) => {
       if (error.name === "CastError") {
-        throw new BadRequestError("Invalid data");
+        return next(new BadRequestError("Invalid Data"));
       }
-      next(new error());
+      return next(new InternalServerError());
     });
 }
 
@@ -80,12 +83,15 @@ function unlikeItem(req, res) {
     )
     .then((updatedItem) => {
       if (!updatedItem) {
-        next(new error());
+        return next(new NotFoundError(`${updatedItem} not found`));
       }
       return res.send(updatedItem);
     })
     .catch((error) => {
-      next(new error());
+      if (error.name === "CastError") {
+        return next(new BadRequestError("Invalid Data"));
+      }
+      return next(new InternalServerError());
     });
 }
 

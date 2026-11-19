@@ -46,7 +46,7 @@ function createUser(req, res, next) {
         if (error.name === "ValidationError") {
           return next(new BadRequestError("Invalid data"));
         }
-        next(error);
+        return next(new InternalServerError());
       });
   });
 }
