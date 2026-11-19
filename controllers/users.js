@@ -1,13 +1,13 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const {
-  BadRequestError,
-  NotFoundError,
-  ConflictError,
-  InvalidAuthError,
-  InternalServerError,
-} = require("../utils/errors");
+
+const { BadRequestError } = require("../utils/errors/BadRequestError");
+const { NotFoundError } = require("../utils/errors/NotFoundError");
+const { InternalServerError } = require("../utils/errors/InternalServerError");
+const { ConflictError } = require("../utils/errors/ConflictError");
+const { InvalidAuthError } = require("../utils/errors/InvalidAuthError");
+
 const { JWT_SECRET } = require("../utils/config");
 
 function getCurrentUser(req, res, next) {

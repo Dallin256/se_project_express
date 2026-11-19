@@ -57,6 +57,18 @@ module.exports.validateUserBody = celebrate({
   }),
 });
 
+module.exports.validateUserCred = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().custom(validateEmail).messages({
+      "string.empty": 'the "Email" field must be filled in',
+      "string.nae": 'the "Email" field must be a valid Email',
+    }),
+    password: Joi.string().required().messages({
+      "string.empty": 'the "password" field must be filled in',
+    }),
+  }),
+});
+
 // module.exports.validateUserId = celebrate({
 //   params: Joi.object().keys({
 //     userId: Joi.string().required().alphanum().length(24).messages({
