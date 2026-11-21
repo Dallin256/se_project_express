@@ -23,9 +23,15 @@ app.get("/", (req, res) => {
   res.send("Server Running :3");
 });
 
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
+
 app.use("/", MainRoutes);
 app.use(errorLogger);
-app.use(errors);
+app.use(errors());
 app.use(handleError);
 
 app.listen(port, () => {});
