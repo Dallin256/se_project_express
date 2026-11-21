@@ -13,7 +13,7 @@ function getItems(req, res, next) {
     .catch((err) => next(new InternalServerError()));
 }
 
-async function deleteItem(req, res) {
+async function deleteItem(req, res, next) {
   try {
     const foundItem = await item.findById(req.params.itemId);
 
@@ -36,7 +36,7 @@ async function deleteItem(req, res) {
   }
 }
 
-function createItem(req, res) {
+function createItem(req, res, next) {
   const { name, weather, imageUrl } = req.body;
   item
     .create({ name, weather, imageUrl, owner: req.user._id })
@@ -51,7 +51,7 @@ function createItem(req, res) {
     });
 }
 
-function likeItem(req, res) {
+function likeItem(req, res, next) {
   item
     .findByIdAndUpdate(
       req.params.itemId,
@@ -73,7 +73,7 @@ function likeItem(req, res) {
     });
 }
 
-function unlikeItem(req, res) {
+function unlikeItem(req, res, next) {
   item
     .findByIdAndUpdate(
       req.params.itemId,
