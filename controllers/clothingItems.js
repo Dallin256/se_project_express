@@ -1,4 +1,3 @@
-const { handleError } = require("../middlewares/error");
 const item = require("../models/clothingItem");
 
 const { BadRequestError } = require("../utils/errors/BadRequestError");
@@ -10,7 +9,7 @@ function getItems(req, res, next) {
   item
     .find({})
     .then((cItem) => res.send(cItem))
-    .catch((err) => next(new InternalServerError()));
+    .catch(() => next(new InternalServerError()));
 }
 
 async function deleteItem(req, res, next) {

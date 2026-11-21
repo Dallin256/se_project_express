@@ -7,7 +7,6 @@ const {
   validateUserBody,
   validateUserCred,
 } = require("../middlewares/validation");
-const handleError = require("../middlewares/error");
 
 router.use("/users", userRoutes);
 router.use("/items", itemRoutes);
