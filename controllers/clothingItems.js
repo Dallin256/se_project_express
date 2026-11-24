@@ -1,9 +1,9 @@
 const item = require("../models/clothingItem");
 
-const { BadRequestError } = require("../utils/errors/BadRequestError");
-const { NotFoundError } = require("../utils/errors/NotFoundError");
-const { ForebiddenError } = require("../utils/errors/ForebiddenError");
-const { InternalServerError } = require("../utils/errors/InternalServerError");
+const BadRequestError = require("../utils/errors/BadRequestError");
+const NotFoundError = require("../utils/errors/NotFoundError");
+const ForebiddenError = require("../utils/errors/ForebiddenError");
+const InternalServerError = require("../utils/errors/InternalServerError");
 
 function getItems(req, res, next) {
   item
@@ -59,7 +59,7 @@ function likeItem(req, res, next) {
     )
     .then((updatedItem) => {
       if (!updatedItem) {
-        return next(new InternalServerError());
+        return next(new NotFoundError());
       }
 
       return res.send(updatedItem);
