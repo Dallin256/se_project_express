@@ -1,6 +1,8 @@
-export default class InvalidAuthError extends Error {
+class InvalidAuthError extends Error {
   constructor(msg) {
     super(msg || "Authorization Required");
     this.statusCode = 401;
   }
 }
+
+module.exports = InvalidAuthError;
